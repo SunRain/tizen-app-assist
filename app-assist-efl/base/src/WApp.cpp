@@ -30,13 +30,15 @@ namespace app_assist {
 
 class _WAppImpl {
 public:
-	_WAppImpl() : _window(nullptr), _firstLaunch(true) {}
+	_WAppImpl() : _window(nullptr), _firstLaunch(true), _resPath(std::string()) {}
 	~_WAppImpl();
 
 public:
 	WWindowController* _window;
 	bool _firstLaunch;
+	std::string _resPath;
 
+	static WApp* _self;
 	static bool _onCreate(void* data);
 	static void _onTerminate(void* data);
 	static void _onPause(void* data);
@@ -45,8 +47,11 @@ public:
 };
 }
 
-_WAppImpl::~_WAppImpl() {
+WApp *_WAppImpl::_self = nullptr;
 
+_WAppImpl::~_WAppImpl() {
+	_window = nullptr;
+	_self = nullptr;
 }
 
 bool _WAppImpl::_onCreate(void* data) {
@@ -101,6 +106,8 @@ WApp::WApp() {
 	WDEBUG("app-assist version=%s", WVersion_get());
 
 	_pv = new _WAppImpl();
+	_WAppImpl::_self = this;
+	_pv->_resPath = app_get_resource_path();
 }
 
 WApp::~WApp() {
@@ -137,3 +144,12 @@ int WApp::onStart(int argc, char* argv[]) {
 	return ui_app_main(argc, argv, &cb, this);
 }
 
+WApp* WApp::instance()
+{
+	return _WAppImpl::_self;
+}
+
+std::string app_assist::WApp::resPath() const
+{
+	return _pv->_resPath;
+}

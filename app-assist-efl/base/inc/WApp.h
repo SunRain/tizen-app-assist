@@ -19,6 +19,7 @@
 #define _APP_ASSIST_WAPP_H_
 
 #include <app.h>
+#include <string>
 #include "WDefine.h"
 
 namespace app_assist {
@@ -43,6 +44,9 @@ class WWindowController;
 * }
 * @endcode
 */
+
+#define wApp WApp::instance()
+
 class WAPP_ASSIST_EXPORT WApp {
 public:
 	/**
@@ -56,6 +60,10 @@ public:
 	 *
 	 */
 	virtual ~WApp();
+
+	static WApp *instance();
+
+	std::string resPath() const;
 
 public:
 	/**
